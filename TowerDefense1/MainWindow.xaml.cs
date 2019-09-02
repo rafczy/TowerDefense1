@@ -39,6 +39,8 @@ namespace TowerDefense1
 
         List<Alien> aliens = new List<Alien>();
         List<Point> path = new List<Point>();
+        SortedDictionary<char, Turret> turrets = new SortedDictionary<char, Turret>();
+
 
         int turn = 0;
 
@@ -52,7 +54,41 @@ namespace TowerDefense1
         private void nextTurn_Click(object sender, RoutedEventArgs e)
         {
             turn++;
+            UpdateAlienLocation();
+            ComputeDamage();
+            //UpdateUI;
 
+        }
+
+        private void ComputeDamage()
+        {
+            foreach (var turret in turrets.Values)
+            {
+                for (int i = 0; i < turret.ShotFreq; i++)
+                {
+                    foreach (var alien in aliens)
+                    {
+                        if (alien.Health > 0)
+                        {
+                            var b = turret.IsInRange(alien.Location);
+                            if (b) //shoot
+                            {
+                                alien.Health -= turret.Damage;
+                            }
+                        }
+                        else
+                        {
+
+                            //remove alien?
+                        }
+                    }
+                }
+
+            }
+        }
+
+        private void UpdateAlienLocation()
+        {
             for (int i = 0; i < Math.Min(turn, aliens.Count); i++)
             {
                 var offset = turn - i - 1;
@@ -60,7 +96,6 @@ namespace TowerDefense1
                 if (offset >= path.Count)
                 {
                     Debug.WriteLine("alien inside");
-                    //aliens[i].Location = 
                     aliens.RemoveAt(i);
                 }
                 else
@@ -68,7 +103,6 @@ namespace TowerDefense1
                     aliens[i].Location = path[offset];
                 }
             }
-
         }
 
         private void reset_Click(object sender, RoutedEventArgs e)
