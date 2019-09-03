@@ -23,8 +23,8 @@ namespace TowerDefense1
     public partial class MainWindow : Window
     {
         string[] battlefield = {
-                               "0111111"/*,
-                               "  A  B1",
+                               "0111111",
+                               "  A  B1"/*,
                                " 111111",
                                " 1     ",
                                " 1C1111",
@@ -56,34 +56,40 @@ namespace TowerDefense1
             turn++;
             UpdateAlienLocation();
             ComputeDamage();
-            //UpdateUI;
+            UpdateUI();
 
+        }
+
+        private void UpdateUI()
+        {
+            
         }
 
         private void ComputeDamage()
         {
             foreach (var turret in turrets.Values)
             {
-                for (int i = 0; i < turret.ShotFreq; i++)
+                foreach (var alien in aliens)
                 {
-                    foreach (var alien in aliens)
+                    if (alien.Health > 0)
                     {
-                        if (alien.Health > 0)
+                        var b = turret.IsInRange(alien.Location);
+                        if (b) //shoot
                         {
-                            var b = turret.IsInRange(alien.Location);
-                            if (b) //shoot
+                            for (int i = 0; i < turret.ShotFreq; i++)
                             {
                                 alien.Health -= turret.Damage;
                             }
-                        }
-                        else
-                        {
 
-                            //remove alien?
+                            break;
                         }
                     }
-                }
+                    else
+                    {
 
+                        //remove alien?
+                    }
+                }
             }
         }
 
@@ -114,7 +120,7 @@ namespace TowerDefense1
             int x = 0, y = 0;
 
             var turretsDefDict = turretsDef.Select(t => new Turret() { AttackRange = t.attackRange, Key = t.key, ShotFreq = t.shotFreq }).ToDictionary(k => k.Key);
-            SortedDictionary<char, Turret> turrets = new SortedDictionary<char, Turret>(turretsDefDict);
+            turrets = new SortedDictionary<char, Turret>(turretsDefDict);
 
 
             //build path

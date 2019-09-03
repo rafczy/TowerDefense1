@@ -17,5 +17,16 @@ namespace TowerDefense1Logic
         {
             Location = new Point(-1, -1);
         }
+
+        public static bool IsOnMap(Point p)
+        {
+            return p.X >= 0 && p.Y >= 0;
+        }
+
+        public bool IsOnMap()
+        {
+            return IsOnMap(this.Location);
+        }
+
     }
 }
