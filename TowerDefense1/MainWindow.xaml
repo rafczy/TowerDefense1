@@ -6,13 +6,19 @@
         xmlns:local="clr-namespace:TowerDefense1"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid x:Name="MySpace" AutomationProperties.Name="MySpace">
+    <Grid x:Name="MySpace" AutomationProperties.Name="MySpace" RenderTransformOrigin="0.486,0.5" Style="{DynamicResource GridStyle1}">
+        <Grid.Resources>
+            <Style x:Key="GridStyle1" TargetType="{x:Type Grid}">
+                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"/>
+            </Style>
+        </Grid.Resources>
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height="133*"/>
+            <RowDefinition Height="76*"/>
         </Grid.RowDefinitions>
-        <Button x:Name="reset" Content="reset" HorizontalAlignment="Left" Margin="10,166,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="reset_Click"/>
-        <Button x:Name="nextTurn" Content="next turn" HorizontalAlignment="Left" Margin="106,166,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="nextTurn_Click"/>
+        <Button x:Name="reset" Content="reset" HorizontalAlignment="Left" Margin="10,33,0,0" Grid.Row="2" VerticalAlignment="Top" Width="75" Click="reset_Click"/>
+        <Button x:Name="nextTurn" Content="next turn" HorizontalAlignment="Left" Margin="106,33,0,0" Grid.Row="2" VerticalAlignment="Top" Width="75" Click="nextTurn_Click"/>
+        <Grid x:Name="GameMap" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" Width="200" Height="100"/>
 
 
 

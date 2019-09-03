@@ -150,12 +150,21 @@ namespace TowerDefense1
             aliens = wave.Select(health => new Alien() { Health = health }).ToList();
             turn = 0;
 
+            //reset  ui
+            //https://stackoverflow.com/questions/18296889/add-rows-columns-to-a-grid-dynamically
 
-            //metoda compute
+            GameMap.ShowGridLines = true;
+            GameMap.RowDefinitions.Clear();
 
+            foreach (var line in battlefield)
+            {
+                RowDefinition rd = new RowDefinition();
+                rd.Height = new GridLength(100, GridUnitType.Star);
 
-            //metoda nextstep->robi update  alien.punkt
+                GameMap.RowDefinitions.Add(rd);
+            }
 
+            
         }
     }
 }
