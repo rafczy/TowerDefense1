@@ -15,6 +15,12 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TowerDefense1Logic;
 
+
+//https://stackoverflow.com/questions/18296889/add-rows-columns-to-a-grid-dynamically
+//https://www.codemag.com/Article/1008021/Centering-Text-on-a-WPF-Shape-Using-a-User-Control
+//https://markheath.net/post/creating-resizable-shape-controls-in resizable ui controls
+
+
 namespace TowerDefense1
 {
     /// <summary>
@@ -24,12 +30,12 @@ namespace TowerDefense1
     {
         string[] battlefield = {
                                "0111111",
-                               "  A  B1"/*,
+                               "  A  B1",
                                " 111111",
                                " 1     ",
                                " 1C1111",
                                " 111 D1",
-                               "      1"*/ };
+                               "      1"/**/ };
         int[] wave = { 30, 14, 27 };//, 21, 13, 0, 15, 17, 0, 18, 26 };
 
 
@@ -62,7 +68,7 @@ namespace TowerDefense1
 
         private void UpdateUI()
         {
-            
+
         }
 
         private void ComputeDamage()
@@ -151,20 +157,68 @@ namespace TowerDefense1
             turn = 0;
 
             //reset  ui
-            //https://stackoverflow.com/questions/18296889/add-rows-columns-to-a-grid-dynamically
 
             GameMap.ShowGridLines = true;
             GameMap.RowDefinitions.Clear();
 
-            foreach (var line in battlefield)
-            {
-                RowDefinition rd = new RowDefinition();
-                rd.Height = new GridLength(100, GridUnitType.Star);
 
-                GameMap.RowDefinitions.Add(rd);
+            int columnCount = (battlefield.FirstOrDefault() ?? string.Empty).Length;
+
+            for (int i = 0; i < columnCount; i++)
+            {
+                ColumnDefinition cd = new ColumnDefinition();
+                GameMap.ColumnDefinitions.Add(cd);
             }
 
-            
+            foreach (var (line, index) in battlefield.Select((line, index) => (line, index)))
+            {
+                RowDefinition rd = new RowDefinition();
+                GameMap.RowDefinitions.Add(rd);
+
+                for (int i = 0; i < columnCount; i++)
+                {
+                    Canvas c = new Canvas();
+                    c.Background = i % 2 == 0 ? Brushes.Aquamarine : Brushes.Beige;
+
+
+                    GameMap.Children.Add(c);
+                    Grid.SetRow(c, index);
+                    Grid.SetColumn(c, i);
+
+                    //
+                    Ellipse el = new Ellipse();
+                    el.Fill = Brushes.Green;
+                    //el.Width = 10;
+                    // el.Height = 10;
+                    //  el.Stretch = Stretch.Fill;
+                    //  el.HorizontalAlignment = HorizontalAlignment.Center;
+                    //  el.VerticalAlignment = VerticalAlignment.Center;
+
+                    Binding widthBinding = new Binding("ActualWidth");
+                    widthBinding.Source = c;
+                    el.SetBinding(Ellipse.WidthProperty, widthBinding);
+
+                    Binding heightBinding = new Binding("ActualHeight");
+                    heightBinding.Source = c;
+                    el.SetBinding(Ellipse.HeightProperty, heightBinding);
+
+                    c.Children.Add(el);
+
+
+                    Label lb = new Label();
+                    lb.Content = (i * 2).ToString();
+                    lb.HorizontalAlignment = HorizontalAlignment.Center;
+                    lb.VerticalAlignment = VerticalAlignment.Top;
+                    Grid.SetRow(lb, index);
+                    Grid.SetColumn(lb, i);
+
+                    GameMap.Children.Add(lb);
+
+
+                }
+            }
+
+
         }
     }
 }
