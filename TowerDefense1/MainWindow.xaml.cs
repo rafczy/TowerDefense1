@@ -177,48 +177,123 @@ namespace TowerDefense1
 
                 for (int i = 0; i < columnCount; i++)
                 {
-                    Canvas c = new Canvas();
-                    c.Background = i % 2 == 0 ? Brushes.Aquamarine : Brushes.Beige;
+                    //var panel = new Canvas();
+                    // panel.Background = i % 2 == 0 ? Brushes.Aquamarine : Brushes.Beige;
 
 
-                    GameMap.Children.Add(c);
-                    Grid.SetRow(c, index);
-                    Grid.SetColumn(c, i);
-
-                    //
-                    Ellipse el = new Ellipse();
-                    el.Fill = Brushes.Green;
-                    //el.Width = 10;
-                    // el.Height = 10;
-                    //  el.Stretch = Stretch.Fill;
-                    //  el.HorizontalAlignment = HorizontalAlignment.Center;
-                    //  el.VerticalAlignment = VerticalAlignment.Center;
-
-                    Binding widthBinding = new Binding("ActualWidth");
-                    widthBinding.Source = c;
-                    el.SetBinding(Ellipse.WidthProperty, widthBinding);
-
-                    Binding heightBinding = new Binding("ActualHeight");
-                    heightBinding.Source = c;
-                    el.SetBinding(Ellipse.HeightProperty, heightBinding);
-
-                    c.Children.Add(el);
+                    // GameMap.Children.Add(panel);
 
 
-                    Label lb = new Label();
-                    lb.Content = (i * 2).ToString();
-                    lb.HorizontalAlignment = HorizontalAlignment.Center;
-                    lb.VerticalAlignment = VerticalAlignment.Top;
-                    Grid.SetRow(lb, index);
-                    Grid.SetColumn(lb, i);
-
-                    GameMap.Children.Add(lb);
+                    //  DrawAlien(index, i);
+                    DrawTurret(index, i);
 
 
                 }
             }
 
 
+        }
+
+        private void DrawTurret(int index, int i)
+        {
+            var panel = new Canvas();
+            GameMap.Children.Add(panel);
+
+            Polyline polyline1 = new Polyline();
+            polyline1.Points.Add(new Point(25, 25));
+            polyline1.Points.Add(new Point(0, 50));
+            polyline1.Points.Add(new Point(25, 75));
+            polyline1.Points.Add(new Point(50, 50));
+            polyline1.Points.Add(new Point(25, 25));
+            polyline1.Points.Add(new Point(25, 0));
+            polyline1.Stroke = Brushes.Blue;
+            polyline1.StrokeThickness = 10;
+
+            Canvas.SetLeft(polyline1, 20);
+            Canvas.SetTop(polyline1, 20);
+            panel.Children.Add(polyline1);
+
+            Grid.SetRow(panel, index);
+            Grid.SetColumn(panel, i);
+        }
+
+        private void DrawAlien(int index, int i)
+        {
+            //
+            Ellipse el = new Ellipse();
+            el.Fill = Brushes.Green;
+            el.VerticalAlignment = VerticalAlignment.Stretch;
+            el.HorizontalAlignment = HorizontalAlignment.Stretch;
+
+            GameMap.Children.Add(el);
+            Grid.SetRow(el, index);
+            Grid.SetColumn(el, i);
+
+            Label lb = new Label();
+            lb.Content = (i * 2).ToString();
+            lb.HorizontalAlignment = HorizontalAlignment.Center;
+            lb.VerticalAlignment = VerticalAlignment.Top;
+
+            GameMap.Children.Add(lb);
+            Grid.SetRow(lb, index);
+            Grid.SetColumn(lb, i);
+
+
+            Ellipse eyeLeft = new Ellipse();
+            eyeLeft.Fill = Brushes.Black;
+            eyeLeft.VerticalAlignment = VerticalAlignment.Center;
+            eyeLeft.HorizontalAlignment = HorizontalAlignment.Left;
+            eyeLeft.Width = 30;
+            eyeLeft.Height = 15;
+            // eyeLeft.RenderTransform = new SkewTransform(0, 45);
+
+
+            Binding widthBindingLeft = new Binding("ActualWidth");
+            widthBindingLeft.Source = el;
+            widthBindingLeft.Converter = new MarginConverter() { BaseThickness = new Thickness(.15, 0, 0, 0) };
+            eyeLeft.SetBinding(Ellipse.MarginProperty, widthBindingLeft);
+
+
+            GameMap.Children.Add(eyeLeft);
+            Grid.SetRow(eyeLeft, index);
+            Grid.SetColumn(eyeLeft, i);
+
+
+
+            Ellipse eyeRight = new Ellipse();
+            eyeRight.Fill = Brushes.Black;
+            eyeRight.VerticalAlignment = VerticalAlignment.Center;
+            eyeRight.HorizontalAlignment = HorizontalAlignment.Right;
+            eyeRight.Width = 30;
+            eyeRight.Height = 15;
+            // eyeRight.RenderTransform = new SkewTransform(0, -45);
+
+
+
+            Binding widthBindingRight = new Binding("ActualWidth");
+            widthBindingRight.Source = el;
+            widthBindingRight.Converter = new MarginConverter() { BaseThickness = new Thickness(0, 0, .15, 0) };
+            eyeRight.SetBinding(Ellipse.MarginProperty, widthBindingRight);
+
+
+
+            GameMap.Children.Add(eyeRight);
+            Grid.SetRow(eyeRight, index);
+            Grid.SetColumn(eyeRight, i);
+
+
+
+
+
+            /*
+                                Binding widthBinding = new Binding("ActualWidth");
+                                widthBinding.Source = panel;
+                                el.SetBinding(Ellipse.WidthProperty, widthBinding);
+
+                                Binding heightBinding = new Binding("ActualHeight");
+                                heightBinding.Source = panel;
+                                el.SetBinding(Ellipse.HeightProperty, heightBinding);
+                                */
         }
     }
 }
