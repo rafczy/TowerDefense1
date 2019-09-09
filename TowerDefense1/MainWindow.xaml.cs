@@ -206,9 +206,7 @@ namespace TowerDefense1
             b.BorderThickness = new Thickness(2);
             b.BorderBrush = Brushes.Black;
             b.Child = panel;
-
-
-
+            
             Viewbox viewbox = new Viewbox();
             viewbox.Child = b;
 
@@ -222,19 +220,19 @@ namespace TowerDefense1
             polyline1.Stroke = Brushes.Blue;
             polyline1.StrokeThickness = 10;
             // polyline1.Margin = new Thickness(25);
-             // polyline1.RenderTransform = new RotateTransform(45 * i, .5, .5);
+            polyline1.RenderTransform = new RotateTransform(45 * i, .5, .5);
+            polyline1.RenderTransformOrigin = new Point(.5, .5);
 
             polyline1.HorizontalAlignment = HorizontalAlignment.Center;
             polyline1.VerticalAlignment = VerticalAlignment.Center;
-            
+
             MultiBinding multiBinding = new MultiBinding();
             multiBinding.Converter = new HalfValueConverter();
             multiBinding.Bindings.Add(new Binding("ActualWidth") { Source = panel });
             multiBinding.Bindings.Add(new Binding("ActualWidth") { Source = polyline1 });
             multiBinding.NotifyOnSourceUpdated = true;//this is important. 
             polyline1.SetBinding(Canvas.LeftProperty, multiBinding);
-
-
+            
             MultiBinding multiBinding2 = new MultiBinding();
             multiBinding2.Converter = new HalfValueConverter();
             multiBinding2.Bindings.Add(new Binding("ActualHeight") { Source = panel });
@@ -242,13 +240,7 @@ namespace TowerDefense1
             multiBinding2.NotifyOnSourceUpdated = true;//this is important. 
             polyline1.SetBinding(Canvas.TopProperty, multiBinding2);
 
-
-
             panel.Children.Add(polyline1);
-
-
-
-
 
             GameMap.Children.Add(viewbox);
             Grid.SetRow(viewbox, index);
