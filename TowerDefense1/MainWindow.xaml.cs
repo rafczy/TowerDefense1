@@ -196,8 +196,21 @@ namespace TowerDefense1
 
         private void DrawTurret(int index, int i)
         {
+
             var panel = new Canvas();
-            GameMap.Children.Add(panel);
+            //panel.ClipToBounds = true; //not needed
+            panel.Width = 125;
+            panel.Height = 125;
+
+            Border b = new Border();
+            b.BorderThickness = new Thickness(2);
+            b.BorderBrush = Brushes.Black;
+            b.Child = panel;
+
+
+
+            Viewbox viewbox = new Viewbox();
+            viewbox.Child = b;
 
             Polyline polyline1 = new Polyline();
             polyline1.Points.Add(new Point(25, 25));
@@ -208,13 +221,38 @@ namespace TowerDefense1
             polyline1.Points.Add(new Point(25, 0));
             polyline1.Stroke = Brushes.Blue;
             polyline1.StrokeThickness = 10;
+            // polyline1.Margin = new Thickness(25);
+             // polyline1.RenderTransform = new RotateTransform(45 * i, .5, .5);
 
-            Canvas.SetLeft(polyline1, 20);
-            Canvas.SetTop(polyline1, 20);
+            polyline1.HorizontalAlignment = HorizontalAlignment.Center;
+            polyline1.VerticalAlignment = VerticalAlignment.Center;
+            
+            MultiBinding multiBinding = new MultiBinding();
+            multiBinding.Converter = new HalfValueConverter();
+            multiBinding.Bindings.Add(new Binding("ActualWidth") { Source = panel });
+            multiBinding.Bindings.Add(new Binding("ActualWidth") { Source = polyline1 });
+            multiBinding.NotifyOnSourceUpdated = true;//this is important. 
+            polyline1.SetBinding(Canvas.LeftProperty, multiBinding);
+
+
+            MultiBinding multiBinding2 = new MultiBinding();
+            multiBinding2.Converter = new HalfValueConverter();
+            multiBinding2.Bindings.Add(new Binding("ActualHeight") { Source = panel });
+            multiBinding2.Bindings.Add(new Binding("ActualHeight") { Source = polyline1 });
+            multiBinding2.NotifyOnSourceUpdated = true;//this is important. 
+            polyline1.SetBinding(Canvas.TopProperty, multiBinding2);
+
+
+
             panel.Children.Add(polyline1);
 
-            Grid.SetRow(panel, index);
-            Grid.SetColumn(panel, i);
+
+
+
+
+            GameMap.Children.Add(viewbox);
+            Grid.SetRow(viewbox, index);
+            Grid.SetColumn(viewbox, i);
         }
 
         private void DrawAlien(int index, int i)
