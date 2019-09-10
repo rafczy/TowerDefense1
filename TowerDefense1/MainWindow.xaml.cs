@@ -52,6 +52,16 @@ namespace TowerDefense1
 
         public MainWindow()
         {
+            Vector vector1 = new Vector(0,2);
+            Vector vector2 = new Vector(1, 1);
+            Double angleBetween;
+
+            
+            angleBetween = Vector.AngleBetween(vector1, vector2);
+
+            
+
+
             InitializeComponent();
 
 
@@ -70,7 +80,7 @@ namespace TowerDefense1
         {
 
         }
-
+        //jam on
         private void ComputeDamage()
         {
             foreach (var turret in turrets.Values)
@@ -87,6 +97,10 @@ namespace TowerDefense1
                                 alien.Health -= turret.Damage;
                             }
 
+                            //calculate angle
+                            turret.Angle = turret.AngleBetween(alien.Location);
+
+                            DrawTurret((int)turret.Location.X, (int)turret.Location.Y);
                             break;
                         }
                     }
@@ -185,7 +199,7 @@ namespace TowerDefense1
 
 
                     //  DrawAlien(index, i);
-                    DrawTurret(index, i);
+                 //   DrawTurret(index, i);
 
 
                 }
@@ -220,12 +234,14 @@ namespace TowerDefense1
             polyline1.Stroke = Brushes.Blue;
             polyline1.StrokeThickness = 10;
             // polyline1.Margin = new Thickness(25);
-            polyline1.RenderTransform = new RotateTransform(45 * i, .5, .5);
-            polyline1.RenderTransformOrigin = new Point(.5, .5);
+            polyline1.RenderTransform = new RotateTransform(45 * i);
+            polyline1.RenderTransformOrigin = new Point(.5, .5); //centering the transform
 
             polyline1.HorizontalAlignment = HorizontalAlignment.Center;
             polyline1.VerticalAlignment = VerticalAlignment.Center;
 
+
+            //centering on canvas
             MultiBinding multiBinding = new MultiBinding();
             multiBinding.Converter = new HalfValueConverter();
             multiBinding.Bindings.Add(new Binding("ActualWidth") { Source = panel });
