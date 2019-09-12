@@ -43,28 +43,16 @@ namespace TowerDefense1
         (char key, int attackRange, int shotFreq)[] turretsDef = { ('A', 3, 2), ('B', 1, 4), ('C', 2, 2), ('D', 1, 3) };
 
 
-        List<Alien> aliens = new List<Alien>();
-        List<Point> path = new List<Point>();
-        SortedDictionary<char, Turret> turrets = new SortedDictionary<char, Turret>();
+        List<Alien> _aliens = new List<Alien>();
+        List<Point> _path = new List<Point>();
+        SortedDictionary<char, Turret> _turrets = new SortedDictionary<char, Turret>();
 
 
         int turn = 0;
 
         public MainWindow()
         {
-            Vector vector1 = new Vector(0,2);
-            Vector vector2 = new Vector(1, 1);
-            Double angleBetween;
-
-            
-            angleBetween = Vector.AngleBetween(vector1, vector2);
-
-            
-
-
             InitializeComponent();
-
-
         }
 
         private void nextTurn_Click(object sender, RoutedEventArgs e)
@@ -79,13 +67,30 @@ namespace TowerDefense1
         private void UpdateUI()
         {
 
+            GameMap.Children.Clear();
+
+            foreach (var alien in _aliens)
+            {
+
+                DrawAlien((int)alien.Location.X, (int)alien.Location.Y, alien.Health);
+
+            }
+
+            foreach (var turret in _turrets.Values)
+            {
+
+                DrawTurret((int)turret.Location.X, (int)turret.Location.Y);
+            }
+
         }
+
+
         //jam on
         private void ComputeDamage()
         {
-            foreach (var turret in turrets.Values)
+            foreach (var turret in _turrets.Values)
             {
-                foreach (var alien in aliens)
+                foreach (var alien in _aliens)
                 {
                     if (alien.Health > 0)
                     {
@@ -94,13 +99,13 @@ namespace TowerDefense1
                         {
                             for (int i = 0; i < turret.ShotFreq; i++)
                             {
-                                alien.Health -= turret.Damage;
+                                //  alien.Health -= turret.Damage;
                             }
 
                             //calculate angle
                             turret.Angle = turret.AngleBetween(alien.Location);
 
-                            DrawTurret((int)turret.Location.X, (int)turret.Location.Y);
+                            //DrawTurret((int)turret.Location.X, (int)turret.Location.Y);
                             break;
                         }
                     }
@@ -115,18 +120,18 @@ namespace TowerDefense1
 
         private void UpdateAlienLocation()
         {
-            for (int i = 0; i < Math.Min(turn, aliens.Count); i++)
+            for (int i = 0; i < Math.Min(turn, _aliens.Count); i++)
             {
                 var offset = turn - i - 1;
 
-                if (offset >= path.Count)
+                if (offset >= _path.Count)
                 {
                     Debug.WriteLine("alien inside");
-                    aliens.RemoveAt(i);
+                    _aliens.RemoveAt(i);
                 }
                 else
                 {
-                    aliens[i].Location = path[offset];
+                    _aliens[i].Location = _path[offset];
                 }
             }
         }
@@ -134,18 +139,18 @@ namespace TowerDefense1
         private void reset_Click(object sender, RoutedEventArgs e)
         {
 
-            aliens.Clear();
-            path.Clear();
+            _aliens.Clear();
+            _path.Clear();
 
             int x = 0, y = 0;
 
             var turretsDefDict = turretsDef.Select(t => new Turret() { AttackRange = t.attackRange, Key = t.key, ShotFreq = t.shotFreq }).ToDictionary(k => k.Key);
-            turrets = new SortedDictionary<char, Turret>(turretsDefDict);
+            _turrets = new SortedDictionary<char, Turret>(turretsDefDict);
 
 
             //build path
 
-            path.Add(new Point() { X = x, Y = y });
+            _path.Add(new Point() { X = x, Y = y });
 
             foreach (var (row, i) in battlefield.Select((v, i) => (v, i)))
             {
@@ -153,12 +158,12 @@ namespace TowerDefense1
                 {
                     if (field == '1')
                     {
-                        path.Add(new Point() { X = i, Y = j });
+                        _path.Add(new Point() { X = i, Y = j });
                     }
                     else
                     if (char.IsLetter(field))
                     {
-                        turrets[field].Location = new Point() { X = i, Y = j };
+                        _turrets[field].Location = new Point() { X = i, Y = j };
                     }
                 }
 
@@ -167,7 +172,7 @@ namespace TowerDefense1
 
 
             // init wave
-            aliens = wave.Select(health => new Alien() { Health = health }).ToList();
+            _aliens = wave.Select(health => new Alien() { Health = health }).ToList();
             turn = 0;
 
             //reset  ui
@@ -184,25 +189,32 @@ namespace TowerDefense1
                 GameMap.ColumnDefinitions.Add(cd);
             }
 
-            foreach (var (line, index) in battlefield.Select((line, index) => (line, index)))
+            foreach (var line in battlefield)
             {
                 RowDefinition rd = new RowDefinition();
                 GameMap.RowDefinitions.Add(rd);
-
-                for (int i = 0; i < columnCount; i++)
-                {
-                    //var panel = new Canvas();
-                    // panel.Background = i % 2 == 0 ? Brushes.Aquamarine : Brushes.Beige;
+            }
 
 
-                    // GameMap.Children.Add(panel);
+            for (int i = 0; i < columnCount; i++)
+            {
+                //  DrawAlien(index, i);
+                //   DrawTurret(index, i);
+            }
 
 
-                    //  DrawAlien(index, i);
-                 //   DrawTurret(index, i);
+            //foreach (var mapObject in _aliens.Concat<MapObject>(_turrets.Values))
+            foreach (var alien in _aliens)
+            {
 
+                DrawAlien((int)alien.Location.X, (int)alien.Location.Y,alien.Health);
 
-                }
+            }
+
+            foreach (var turret in _turrets.Values)
+            {
+
+                DrawTurret((int)turret.Location.X, (int)turret.Location.Y);
             }
 
 
@@ -210,6 +222,10 @@ namespace TowerDefense1
 
         private void DrawTurret(int index, int i)
         {
+            if (index < 0 || i < 0)
+            {
+                return;
+            }
 
             var panel = new Canvas();
             //panel.ClipToBounds = true; //not needed
@@ -220,7 +236,7 @@ namespace TowerDefense1
             b.BorderThickness = new Thickness(2);
             b.BorderBrush = Brushes.Black;
             b.Child = panel;
-            
+
             Viewbox viewbox = new Viewbox();
             viewbox.Child = b;
 
@@ -248,7 +264,7 @@ namespace TowerDefense1
             multiBinding.Bindings.Add(new Binding("ActualWidth") { Source = polyline1 });
             multiBinding.NotifyOnSourceUpdated = true;//this is important. 
             polyline1.SetBinding(Canvas.LeftProperty, multiBinding);
-            
+
             MultiBinding multiBinding2 = new MultiBinding();
             multiBinding2.Converter = new HalfValueConverter();
             multiBinding2.Bindings.Add(new Binding("ActualHeight") { Source = panel });
@@ -263,8 +279,13 @@ namespace TowerDefense1
             Grid.SetColumn(viewbox, i);
         }
 
-        private void DrawAlien(int index, int i)
+        private void DrawAlien(int index, int i, int health)
         {
+            if (index < 0 || i < 0)
+            {
+                return;
+            }
+
             //
             Ellipse el = new Ellipse();
             el.Fill = Brushes.Green;
@@ -276,7 +297,7 @@ namespace TowerDefense1
             Grid.SetColumn(el, i);
 
             Label lb = new Label();
-            lb.Content = (i * 2).ToString();
+            lb.Content = health.ToString();
             lb.HorizontalAlignment = HorizontalAlignment.Center;
             lb.VerticalAlignment = VerticalAlignment.Top;
 
